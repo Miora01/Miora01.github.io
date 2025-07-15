@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Işıklar Açılacak</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+
+    .swing {
+      animation: swing 2s ease-in-out infinite;
+      transform-origin: top center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer; /* Tıklanabilir olduğunu belirtmek için */
+    }
+
+    .rope {
+      width: 2px;
+      height: 100px;
+      background-color: #888;
+    }
+
+    .bulb {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle at 30% 30%, #444, #222);
+      border-radius: 50% 50% 45% 45%;
+      position: relative;
+      box-shadow: inset 0 0 10px #000;
+      user-select: none;
+    }
+
+    .bulb::before {
+      content: '';
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 20px;
+      background-color: #666;
+      border-radius: 4px;
+    }
+
+    .footer {
+      width: 90%;
+      max-width: 500px;
+      margin: 20px auto 40px;
+      padding: 25px 30px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+      transition: box-shadow 0.3s ease;
+      user-select: none;
+    }
+
+    .footer:hover {
+      box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+    }
+
+    .footer p {
+      font-size: 20px;
+      color: #eee;
+      font-weight: 500;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes swing {
+      0%   { transform: rotate(0deg); }
+      25%  { transform: rotate(3deg); }
+      50%  { transform: rotate(0deg); }
+      75%  { transform: rotate(-3deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Modal stil */
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 30px 40px;
+      max-width: 400px;
+      color: #eee;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      text-align: center;
+      position: relative;
+      user-select: none;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.4;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="swing" id="bulb-container">
+      <div class="rope"></div>
+      <div class="bulb"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Işıklar açılmak için doğru zamanı bekliyor...</p>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-describedby="modalDesc">
+    <div class="modal">
+      <p id="modalDesc">Üzgünüm ışıkları sadece ecrinim açabilir çünkü doğru zamanı bir tek o bilir</p>
+    </div>
+  </div>
+
+  <script>
+    const bulbContainer = document.getElementById('bulb-container');
+    const modal = document.getElementById('modal');
+
+    bulbContainer.addEventListener('click', () => {
+      modal.classList.add('active');
+    });
+
+    // Modal dışına tıklayınca modal kapanacak
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>
