@@ -238,22 +238,27 @@
 
   /* "Doğru zaman geldi" widget */
   #timeReachedWidget {
-    position: fixed;
-    top: calc(50% + 80px); /* Ampulün biraz altında */
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 16px;
-    padding: 20px 40px;
-    font-size: 24px;
-    font-weight: 700;
-    color: #333;
-    box-shadow: 0 8px 24px rgba(255,0,0,0.3);
-    z-index: 3000;
-    user-select: none;
-    text-align: center;
-    display: none;
-  }
+  position: fixed;
+  top: calc(50% + 80px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  box-shadow: 0 8px 24px rgba(255,0,0,0.3);
+  z-index: 3000;
+  user-select: none;
+  text-align: center;
+  display: none;
+  max-width: 90vw;
+  width: 90%;
+  max-height: 60vh;
+  overflow-y: auto;
+  line-height: 1.6;
+}
 
   /* Kalp animasyonları için stil */
   .heart {
