@@ -237,29 +237,18 @@
   }
 
   /* "Doğru zaman geldi" widget */
-#timeReachedWidget {
-  position: fixed;
-  top: calc(100px + 100px); /* ampulün biraz altında */
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 24px 28px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  box-shadow: 0 8px 24px rgba(255, 0, 0, 0.15);
-  z-index: 3000;
-  user-select: none;
-  text-align: center;
-  max-width: 90%;
-  width: 450px;
-  max-height: 70vh;
-  overflow-y: auto;
-  line-height: 1.6;
-  word-wrap: break-word;
-  box-sizing: border-box;
-}
+    #timeReachedWidget {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+      font-weight: 600;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 600px;
+      margin: 20px auto 0;
+      box-shadow: 0 8px 24px rgba(255,0,0,0.2);
+    }
+
 
   /* Kalp animasyonları için stil */
   .heart {
@@ -310,16 +299,6 @@
       <div class="rope"></div>
       <div class="bulb" id="bulb"></div>
     </div>
-      <div id="timeReachedWidget">
-        Ecrinim bir tanem, şu an bu kelimeleri yazmak bana oldukça çok geliyor…  
-        Sanırım biraz duygusallaştım. Ama seni hep bekleyeceğimi söylemiştim, yeter ki sen gel demiştim.  
-        Ve sonunda geldin…  
-        Artık bütün korkular, geçmişin gölgeleri geride kalmış demek oluyor.  
-        Seni en saf duygularımla, en gerçek hâlimle seviyorum.  
-        Bu hisleri anlatmaya çalışsam, sanırım bu yazılar hiç bitmez...  
-        Seni hiç üzmeyeceğim. Bunu sen de biliyorsun.  
-        Hoş geldin Ecrinim, iyi ki geldin, iyi ki o ışıkları açtın. ❤️
-      </div>
   </div>
 
   <div class="footer" id="footerText">
@@ -347,7 +326,8 @@
     <p id="feedback" style="color:#ff6666; font-weight:600; margin-top: 12px;"></p>
   </div>
 
-
+  <!-- "Doğru zaman geldi" widget -->
+  <div id="timeReachedWidget">Ecrinim bir tanem şuan bu kelimeleri yazmak bana oldukça çok geliyor hatta sanırım biraz duygusallaştım sanırım ama seni hep bekleyeceğimi söylemiştim yeterki sen gel demiştim sonunda geldin sonunda bütün korkular veya eski düşünceler geride bırakılmış demek oluyor seni çok seviyorum en saf duygularımla seviyorum bu duygularımı anlatmaya çalışsam sanırım bu yazılar hiç bitmez ahahaha seni hiç bir zaman üzmeyeceğim ki bunu sende biliyorsundur zaten seni çok seviyorum birtanem iyi ki geldin iyi ki o ışıkları açtın❤️ </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
