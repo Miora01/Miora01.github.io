@@ -172,6 +172,32 @@
     background: #666666;
   }
 
+
+    /* "Doğru zaman geldi" widget */
+    #timeReachedWidget {
+      display:none;
+      top: calc(100% + 50px); /* ampulün biraz altında */
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 24px 28px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      box-shadow: 0 8px 24px rgba(255, 0, 0, 0.15);
+      z-index: 3000;
+      user-select: none;
+      text-align: center;
+      max-width: 90vw;
+      width: 90%;
+      max-height: 70vh;
+      overflow-y: auto;
+      line-height: 1.6;
+      word-wrap: break-word;
+      box-sizing: border-box;
+    }
+
+
   /* Anahtar kelime widget */
   #keywordWidget {
     position: fixed;
@@ -235,31 +261,6 @@
   #closeKeywordWidget:hover {
     color: #eee;
   }
-
-  /* "Doğru zaman geldi" widget */
-    #timeReachedWidget {
-      display:none;
-      top: calc(100% + 50px); /* ampulün biraz altında */
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      padding: 24px 28px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
-      box-shadow: 0 8px 24px rgba(255, 0, 0, 0.15);
-      z-index: 3000;
-      user-select: none;
-      text-align: center;
-      max-width: 90vw;
-      width: 90%;
-      max-height: 70vh;
-      overflow-y: auto;
-      line-height: 1.6;
-      word-wrap: break-word;
-      box-sizing: border-box;
-    }
-
 
   /* Kalp animasyonları için stil */
   .heart {
