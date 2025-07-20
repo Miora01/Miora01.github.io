@@ -503,11 +503,13 @@
       heart.classList.add('heart');
       heart.textContent = '❤️';
       heart.style.left = Math.random() * window.innerWidth + 'px';
-      heart.style.top = (window.innerHeight + 30) + 'px';
+      heart.style.top = Math.random() * window.innerHeight + 'px';
       heart.style.fontSize = (14 + Math.random() * 16) + 'px';
       heart.style.animationDuration = (3 + Math.random() * 2) + 's';
 
+
       document.body.appendChild(heart);
+
 
       // Animasyon sonunda kalbi kaldır
       heart.addEventListener('animationend', () => {
