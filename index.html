@@ -21,6 +21,11 @@
     animation: bgPulse 10s ease-in-out infinite;
     overflow: hidden;
     position: relative;
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+  body.white-bg {
+    background: white !important;
+    color: #333 !important;
   }
 
   #ekgCanvas {
@@ -105,6 +110,7 @@
     color: #eee;
     position: relative;
     z-index: 20;
+    transition: opacity 0.5s ease;
   }
 
   /* Modal */
@@ -232,6 +238,56 @@
     color: #eee;
   }
 
+  /* Doğru zaman widget */
+  #timeReachedWidget {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    padding: 20px 40px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    box-shadow: 0 8px 24px rgba(255,0,0,0.3);
+    z-index: 3000;
+    user-select: none;
+    text-align: center;
+    display: none;
+  }
+
+  /* Kalp animasyonları container */
+  #heartsContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 2500;
+  }
+
+  .heart {
+    position: absolute;
+    font-size: 24px;
+    color: red;
+    animation: floatUp 4s linear forwards;
+    user-select: none;
+  }
+
+  @keyframes floatUp {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-150px) scale(1.5);
+      opacity: 0;
+    }
+  }
+
   /* Animasyonlar */
   @keyframes swing {
     0%   { transform: rotate(0deg); }
@@ -284,6 +340,14 @@
     <button id="submitKeyword">Gönder</button>
     <p id="feedback" style="color:#ff6666; font-weight:600; margin-top: 12px;"></p>
   </div>
+
+  <!-- Doğru zaman geldi widget -->
+  <div id="timeReachedWidget">
+    Doğru zaman geldi ❤️
+  </div>
+
+  <!-- Kalp animasyonları container -->
+  <div id="heartsContainer"></div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -441,7 +505,7 @@
     });
 
     // Anahtar kelime doğru mu?
-    const correctKeyword = "cench"; // dilediğin kelimeyi değiştir
+    const correctKeyword = "cench"; // senin istediğin anahtar kelime
 
     // Ampul durumunu Firestore'a kaydet
     function saveAmpulState(isOn) {
@@ -452,20 +516,60 @@
     function loadAmpulState() {
       db.collection('ampulDurumu').doc('state').get().then(doc => {
         if(doc.exists && doc.data().ampulAcik) {
-          bulb.classList.add('on');
-          document.getElementById('footerText').querySelector('p').textContent = "Işıklar açıldı!";
+          turnAmpulOn();
         }
       }).catch(console.error);
     }
 
+    // Kalpler için animasyon fonksiyonu
+    function showHeartsAnimation() {
+      const container = document.getElementById('heartsContainer');
+
+      // Kalp oluştur
+      for(let i=0; i<30; i++) {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.textContent = '❤️';
+        heart.style.left = `${Math.random() * 100}vw`;
+        heart.style.top = `${100 + Math.random() * 50}vh`;
+        heart.style.animationDelay = `${Math.random() * 4}s`;
+        container.appendChild(heart);
+
+        // 4 saniye sonra kalbi sil
+        setTimeout(() => {
+          container.removeChild(heart);
+        }, 4000);
+      }
+    }
+
+    // Ampulü açan fonksiyon (ortaya çıkan efektler vs)
+    function turnAmpulOn() {
+      bulb.classList.add('on');
+      document.getElementById('footerText').style.display = 'none';
+      document.getElementById('ekgCanvas').style.display = 'none';
+
+      // Arka plan beyaz yap
+      document.body.classList.add('white-bg');
+
+      // Yeni widget göster
+      document.getElementById('timeReachedWidget').style.display = 'block';
+
+      // Kalp animasyonlarını başlat
+      showHeartsAnimation();
+      setInterval(showHeartsAnimation, 4000);
+
+      // Footer yazısını değiştir (isteğe bağlı)
+      // document.getElementById('footerText').querySelector('p').textContent = "Işıklar açıldı!";
+    }
+
+    // Anahtar kelime gönderildiğinde
     submitKeyword.addEventListener('click', () => {
       const val = keywordInput.value.trim().toLowerCase();
       if(val === correctKeyword.toLowerCase()) {
-        bulb.classList.add('on');
+        turnAmpulOn();
         keywordWidget.style.display = 'none';
         keywordInput.value = '';
         feedback.textContent = '';
-        document.getElementById('footerText').querySelector('p').textContent = "Işıklar açıldı!";
         saveAmpulState(true);
       } else {
         feedback.textContent = 'Yanlış anahtar kelime. Tekrar deneyin.';
@@ -476,48 +580,47 @@
     window.onload = () => {
       loadAmpulState();
     };
-// Admin panel tuş kombinasyonu (Shift + A)
-document.addEventListener('keydown', (e) => {
-  if (e.shiftKey && e.key.toLowerCase() === 'a') {
-    document.getElementById('adminPanel').style.display = 'block';
-  }
-});
 
-// Admin panelden ampul durumunu güncelle
-function setAmpul(isOn) {
-  db.collection('ampulDurumu').doc('state').set({ ampulAcik: isOn }).then(() => {
-    document.getElementById('adminPanel').style.display = 'none';
-    location.reload(); // Sayfayı yenileyerek durumu uygula
-  });
-}
+    // Admin panel tuş kombinasyonu (Shift + A)
+    document.addEventListener('keydown', (e) => {
+      if (e.shiftKey && e.key.toLowerCase() === 'a') {
+        document.getElementById('adminPanel').style.display = 'block';
+      }
+    });
 
-
-
+    // Admin panelden ampul durumunu güncelle
+    function setAmpul(isOn) {
+      db.collection('ampulDurumu').doc('state').set({ ampulAcik: isOn }).then(() => {
+        document.getElementById('adminPanel').style.display = 'none';
+        location.reload(); // Sayfayı yenileyerek durumu uygula
+      });
+    }
   </script>
+
   <!-- Admin Panel -->
-<div id="adminPanel" style="
-  display:none;
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
-  background:rgba(255,255,255,0.1);
-  padding:30px 40px;
-  border-radius:20px;
-  backdrop-filter:blur(15px);
-  box-shadow:0 8px 32px rgba(31, 38, 135, 0.25);
-  color:#eee;
-  z-index:3000;
-  text-align:center;
-  font-family: 'Unbounded', sans-serif;
-">
-  <h2>Admin Paneli</h2>
-  <p>Ampul Durumunu Değiştir</p>
-  <button onclick="setAmpul(true)">Ampulü Aç</button>
-  <button onclick="setAmpul(false)">Ampulü Kapat</button>
-  <br><br>
-  <button onclick="document.getElementById('adminPanel').style.display='none'">Kapat</button>
-</div>
+  <div id="adminPanel" style="
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    background:rgba(255,255,255,0.1);
+    padding:30px 40px;
+    border-radius:20px;
+    backdrop-filter:blur(15px);
+    box-shadow:0 8px 32px rgba(31, 38, 135, 0.25);
+    color:#eee;
+    z-index:3000;
+    text-align:center;
+    font-family: 'Unbounded', sans-serif;
+  ">
+    <h2>Admin Paneli</h2>
+    <p>Ampul Durumunu Değiştir</p>
+    <button onclick="setAmpul(true)">Ampulü Aç</button>
+    <button onclick="setAmpul(false)">Ampulü Kapat</button>
+    <br><br>
+    <button onclick="document.getElementById('adminPanel').style.display='none'">Kapat</button>
+  </div>
 
 </body>
 </html>
