@@ -6,7 +6,7 @@
 <title>Işıklar Açılacak</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&display=swap" rel="stylesheet" />
 <style>
-  /* ===== Temel Stil ===== */
+  /* -- Eski stil kodlarını buraya olduğu gibi koy */
   body {
     margin: 0;
     font-family: 'Unbounded', sans-serif;
@@ -65,15 +65,12 @@
     background-color: #666;
     border-radius: 4px;
   }
-  /* Ampul açık hali */
   .bulb.on {
     background: radial-gradient(circle at 30% 30%, #fff67e, #f3d250);
     box-shadow:
       0 0 20px 5px #fffa90,
       inset 0 0 20px 5px #fff67e;
   }
-
-  /* Footer mesaj */
   .footer {
     width: 90%;
     max-width: 500px;
@@ -102,8 +99,6 @@
     margin: 0;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
-
-  /* Modal widget */
   .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -139,8 +134,6 @@
     line-height: 1.4;
     text-shadow: 0 1px 3px rgba(0,0,0,0.4);
   }
-
-  /* Admin panel */
   #adminPanel {
     display:none;
     position:fixed;
@@ -171,8 +164,6 @@
     background-color: #5a6ef8;
     color: white;
   }
-
-  /* Swing animasyonu */
   @keyframes swing {
     0%   { transform: rotate(0deg); }
     25%  { transform: rotate(3deg); }
@@ -180,19 +171,15 @@
     75%  { transform: rotate(-3deg); }
     100% { transform: rotate(0deg); }
   }
-  /* Fade in */
   @keyframes fadeInText {
     from { opacity: 0; }
     to { opacity: 1; }
   }
-  /* Background pulse */
   @keyframes bgPulse {
     0% { background-position: 0% 0%; }
     50% { background-position: 100% 100%; }
     100% { background-position: 0% 0%; }
   }
-
-  /* Nabız (EKG) çizgisi */
   #ekg {
     position: fixed;
     top: 50%;
@@ -205,11 +192,6 @@
     pointer-events: none;
     z-index: 1;
   }
-
-  /* EKG kaplama ve animasyon için style */
-  /* ... ayrıntılı ekranda JS ile dinamik çizim yapılıyor ... */
-
-  /* İçe çekilme animasyonu (widget ve container için) */
   .collapse-animate {
     animation: collapseScaleFade 0.8s forwards;
   }
@@ -223,8 +205,6 @@
       transform: scale(0.3);
     }
   }
-
-  /* Cench modu özel stilleri */
   body.cench-mode {
     background: white !important;
     animation: none !important;
@@ -237,58 +217,110 @@
   body.cench-mode #adminPanel {
     display: none !important;
   }
-  /* Ampul sabit görünür */
   body.cench-mode .bulb {
     background: radial-gradient(circle at 30% 30%, #fff67e, #f3d250) !important;
     box-shadow:
       0 0 40px 15px #fffa90,
       inset 0 0 40px 15px #fff67e !important;
-    cursor: default !important;
-    animation: none !important;
   }
 
-  /* Ortadaki özel widget */
-  #cenchWidget {
+  /* Cench modu kalp animasyonu */
+  .heart {
+    position: fixed;
+    animation-name: floatUp;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+    user-select: none;
+    pointer-events: none;
+    color: #ff4d6d;
+    font-size: 25px;
+    opacity: 0.8;
+    z-index: 1500;
+  }
+  @keyframes floatUp {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-200px) scale(1.5);
+      opacity: 0;
+    }
+  }
+  /* Anahtar kelime widget */
+  #keyInputWidget {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(240, 240, 240, 0.95);
-    color: #c0392b;
-    font-size: 24px;
-    padding: 25px 40px;
-    border-radius: 22px;
-    font-weight: 700;
-    box-shadow: 0 10px 30px rgba(192, 57, 43, 0.3);
+    background: rgba(0,0,0,0.7);
+    padding: 25px 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(31,38,135,0.25);
+    backdrop-filter: blur(15px);
+    color: #eee;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
     user-select: none;
-    text-align: center;
-    z-index: 4000;
     display: none;
+    z-index: 2000;
   }
-
-  /* Kalp animasyonları */
-  .heart {
-    position: fixed;
-    font-size: 30px;
-    animation: floatUp 5s linear infinite;
-    opacity: 0.85;
+  #keyInputWidget input {
+    width: 220px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: none;
+    margin-right: 12px;
+    font-size: 16px;
+    font-family: 'Unbounded', sans-serif;
+  }
+  #keyInputWidget button {
+    padding: 8px 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    background-color: #888;
+    color: #eee;
+    transition: background-color 0.3s ease;
+  }
+  #keyInputWidget button:hover {
+    background-color: #666;
+  }
+  #keyInputWidget .closeBtn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: #eee;
+    cursor: pointer;
+  }
+  /* Ecrinim düğmesi modal içi */
+  #openKeyInputBtn {
+    margin-top: 20px;
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    background-color: #666;
+    color: #eee;
+    transition: background-color 0.3s ease;
     user-select: none;
   }
-  @keyframes floatUp {
-    0% {
-      transform: translateY(100vh) scale(1);
-      opacity: 0.8;
-    }
-    100% {
-      transform: translateY(-50px) scale(1.5);
-      opacity: 0;
-    }
+  #openKeyInputBtn:hover {
+    background-color: #444;
   }
 </style>
 </head>
 <body>
   <div class="container" id="mainContent">
-    <div class="swing" id="bulb-container" tabindex="0" aria-label="Ampul, doğru zamanı bekliyor">
+    <div class="swing" id="bulbContainer">
       <div class="rope"></div>
       <div class="bulb" id="bulb"></div>
     </div>
@@ -304,81 +336,34 @@
   <div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-describedby="modalDesc">
     <div class="modal">
       <p id="modalDesc">Üzgünüm, ışıkları sen değil sadece <strong>Ecrin’im</strong> açabilir.<br>Çünkü doğru zamanı o bilir.</p>
-      <button id="openKeyInputBtn" style="margin-top: 15px; background: rgba(255,255,255,0.15); border:none; padding: 8px 20px; border-radius: 15px; color:#eee; cursor:pointer;">Ecrin'im</button>
+      <button id="openKeyInputBtn">Ecrin’im</button>
     </div>
   </div>
 
-  <!-- Anahtar kelime input widget -->
-  <div id="keyInputWidget" style="
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 30px 40px;
-    border-radius: 20px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.6);
-    display: none;
-    z-index: 5000;
-    user-select: none;
-    text-align: center;
-    font-family: 'Unbounded', sans-serif;
-  ">
-    <h2>Anahtar Kelimeyi Gir</h2>
-    <input type="text" id="keyInput" placeholder="Anahtar kelime" autocomplete="off" style="font-size: 20px; padding: 10px; width: 220px; border-radius: 12px; border:none; outline:none; margin-top: 10px;" />
-    <br />
-    <button id="keySubmitBtn" style="
-      margin-top: 15px;
-      background: #555;
-      border:none;
-      color: white;
-      font-weight: 700;
-      font-size: 18px;
-      border-radius: 15px;
-      padding: 10px 24px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    ">Gönder</button>
-    <br />
-    <button id="keyCloseBtn" style="
-      margin-top: 10px;
-      background: #222;
-      border:none;
-      color: #aaa;
-      font-weight: 500;
-      font-size: 14px;
-      border-radius: 12px;
-      padding: 6px 18px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    ">Kapat</button>
-  </div>
-
-  <!-- Cench modu widget -->
-  <div id="cenchWidget">
-    Doğru zaman geldi, <br><strong>Cench</strong> zamanı... ❤️
+  <!-- Anahtar kelime widget -->
+  <div id="keyInputWidget">
+    <button class="closeBtn" id="keyCloseBtn">&times;</button>
+    <p>Lütfen anahtar kelimeyi gir:</p>
+    <input type="text" id="keyInput" autocomplete="off" />
+    <button id="keySubmitBtn">Gönder</button>
   </div>
 
   <!-- Admin Panel -->
   <div id="adminPanel">
-    <h2>Admin Paneli</h2>
-    <p>Ampul Durumunu Değiştir</p>
-    <button onclick="setAmpul(true)">Ampulü Aç</button>
-    <button onclick="setAmpul(false)">Ampulü Kapat</button>
-    <br /><br />
-    <button onclick="document.getElementById('adminPanel').style.display='none'">Kapat</button>
+    <h2>Admin Panel</h2>
+    <button id="toggleAmpulBtn">Ampul Aç/Kapa</button>
+    <button id="resetCenchBtn">Cench Modu Sıfırla</button>
   </div>
 
-  <!-- Tik-tak ses -->
+  <!-- Tik-tak sesi -->
   <audio autoplay loop>
     <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_7c351ba9e6.mp3" type="audio/mpeg" />
   </audio>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 <script>
-  // Firebase konfigürasyonu
+  // Firebase yapılandırma (senin verdiğin)
   const firebaseConfig = {
     apiKey: "AIzaSyDYb071_2yKlgy6tNRjpW47esPBbzOGuI4",
     authDomain: "isiklar-39c08.firebaseapp.com",
@@ -388,14 +373,16 @@
     appId: "1:1097392235236:web:c3162f351ecbc4258b42f1",
     measurementId: "G-BWC9YWGM37"
   };
+
+  // Firebase başlat
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
+  // Elementler
   const bulb = document.getElementById('bulb');
-  const bulbContainer = document.getElementById('bulb-container');
-  const modal = document.getElementById('modal');
+  const bulbContainer = document.getElementById('bulbContainer');
   const footerText = document.getElementById('footerText');
-  const modalOverlay = document.getElementById('modal');
+  const modal = document.getElementById('modal');
   const mainContent = document.getElementById('mainContent');
   const footerMsg = document.getElementById('footerMsg');
   const keyInputWidget = document.getElementById('keyInputWidget');
@@ -403,183 +390,209 @@
   const keySubmitBtn = document.getElementById('keySubmitBtn');
   const keyCloseBtn = document.getElementById('keyCloseBtn');
   const openKeyInputBtn = document.getElementById('openKeyInputBtn');
-  const censchWidget = document.getElementById('cenchWidget');
-
-  // Nabız animasyonu canvas
+  const adminPanel = document.getElementById('adminPanel');
+  const toggleAmpulBtn = document.getElementById('toggleAmpulBtn');
+  const resetCenchBtn = document.getElementById('resetCenchBtn');
   const ekgCanvas = document.getElementById('ekg');
   const ctx = ekgCanvas.getContext('2d');
-  let width, height;
-  let points = [];
-  let maxPoints = 180;
-  let speed = 1;
-  let amplitude = 25;
+
+  // Durumlar
   let isAmpulOn = false;
   let isCenchMode = false;
 
-  // Responsive canvas ayarları
-  function resizeCanvas() {
-    width = window.innerWidth;
-    height = 100;
-    ekgCanvas.width = width;
-    ekgCanvas.height = height;
-  }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+  // EKG canvas ayarları
+  let maxPoints = 100;
+  let points = [];
+  let offset = 0;
+  let speed = 1;
+  let amplitude = 25;
+  ekgCanvas.width = window.innerWidth * 0.9;
+  ekgCanvas.height = 100;
 
-  // Rastgele dalga oluşturma
+  // EKG için random noktalar oluştur
   function generatePoints() {
     points = [];
     for (let i = 0; i < maxPoints; i++) {
-      let y = height / 2 + (Math.random() - 0.5) * amplitude;
-      points.push(y);
+      points.push(Math.random() * ekgCanvas.height * 0.6 + ekgCanvas.height * 0.2);
     }
   }
   generatePoints();
 
-  // Çizim değişkenleri
-  let offset = 0;
-
+  // EKG çizim fonksiyonu
   function drawEkg() {
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, ekgCanvas.width, ekgCanvas.height);
     ctx.lineWidth = 3;
-    ctx.strokeStyle = '#999';
-
+    ctx.strokeStyle = 'rgba(150, 150, 150, 0.9)';
     ctx.beginPath();
-    for (let i = 0; i < maxPoints; i++) {
-      let x = (i * width) / maxPoints;
-      let y = points[i] + Math.sin((offset + i) * 0.3) * amplitude * 0.5;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+
+    for (let i = 0; i < maxPoints - 1; i++) {
+      let x1 = (i * ekgCanvas.width) / (maxPoints - 1);
+      let y1 = points[i];
+      let x2 = ((i + 1) * ekgCanvas.width) / (maxPoints - 1);
+      let y2 = points[i + 1];
+
+      // Iniș çıkış efektleri için amplitude ekle
+      let waveHeight = amplitude * Math.sin((offset + i) * 0.3);
+
+      ctx.lineTo(x1, y1 - waveHeight);
     }
     ctx.stroke();
+
     offset += speed;
-    requestAnimationFrame(drawEkg);
+    if (offset > maxPoints * 10) offset = 0;
   }
 
-  drawEkg();
+  // Animasyon döngüsü
+  function animate() {
+    if (!isCenchMode) {
+      drawEkg();
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, ekgCanvas.width, ekgCanvas.height);
+    }
+  }
 
-  // Ampulü aç kapa animasyon
-  function setAmpul(on) {
-    isAmpulOn = on;
-    if (on) {
+  // Ampul aç kapa görsel güncelle
+  function updateAmpul() {
+    if (isAmpulOn) {
       bulb.classList.add('on');
-      footerText.textContent = 'Işıklar açıldı, doğru zamanı bekliyor.';
     } else {
       bulb.classList.remove('on');
-      footerText.textContent = 'Işıklar açılacak, doğru zamanı bekliyor.';
     }
-    db.collection('settings').doc('status').set({ ampulAcik: on });
   }
 
-  // Firebase'den durumu al
-  db.collection('settings').doc('status').get().then(doc => {
-    if (doc.exists) {
-      setAmpul(doc.data().ampulAcik);
-    }
-  });
+  // Firestore’dan ayarları al ve gerçek zamanlı dinle
+  function listenSettings() {
+    db.collection('settings').doc('status').onSnapshot(doc => {
+      if (!doc.exists) return;
+      const data = doc.data();
+      isAmpulOn = !!data.ampulAcik;
+      isCenchMode = !!data.cenchMode;
+      updateAmpul();
+      applyMode();
+    });
+  }
 
-  // Modal aç/kapa işlemleri
-  bulbContainer.addEventListener('click', () => {
-    if (isCenchMode) return;
-    modal.classList.add('active');
-  });
-
-  modal.addEventListener('click', e => {
-    if (e.target === modal) modal.classList.remove('active');
-  });
-
-  // Ecrin'im düğmesine tıklayınca anahtar kelime widget açılır
-  openKeyInputBtn.addEventListener('click', () => {
-    modal.classList.remove('active');
-    keyInputWidget.style.display = 'block';
-    keyInput.focus();
-  });
-
-  // Anahtar kelime gönderme
-  keySubmitBtn.addEventListener('click', () => {
-    const val = keyInput.value.trim().toLowerCase();
-    if (val === 'cench') {
-      activateCenchMode();
-      keyInputWidget.style.display = 'none';
-    } else {
-      alert('Anahtar kelime yanlış!');
-    }
-  });
-
-  keyCloseBtn.addEventListener('click', () => {
-    keyInputWidget.style.display = 'none';
-  });
-
-  // Cench modunu aktif et
-  function activateCenchMode() {
-    if (isCenchMode) return;
-    isCenchMode = true;
-
-    // İçeriği içe çekilerek gizle
-    mainContent.classList.add('collapse-animate');
-    footerMsg.classList.add('collapse-animate');
-    modal.classList.remove('active');
-
-    // Animasyon sonrası içerikleri gizle, arka plan beyaz yap
-    setTimeout(() => {
-      mainContent.style.display = 'none';
-      footerMsg.style.display = 'none';
-      ekgCanvas.style.display = 'none';
+  // Mod değişimi uygula
+  function applyMode() {
+    if (isCenchMode) {
       document.body.classList.add('cench-mode');
-      censchWidget.style.display = 'block';
-
-      // Ampulü kesin açık yap
-      setAmpul(true);
-
-      // Kalp animasyonu başlat
-      createHearts();
-    }, 850);
-
-    // Firebase'e kaydet
-    db.collection('settings').doc('status').set({ ampulAcik: true });
-  }
-
-  // Kalp animasyonu
-  function createHearts() {
-    const heartCount = 30;
-    for (let i = 0; i < heartCount; i++) {
-      const heart = document.createElement('div');
-      heart.className = 'heart';
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.fontSize = (20 + Math.random() * 30) + 'px';
-      heart.style.animationDuration = (3 + Math.random() * 5) + 's';
-      heart.style.animationDelay = (Math.random() * 5) + 's';
-      heart.textContent = '❤️';
-      document.body.appendChild(heart);
-
-      // Kalp animasyonu sona erince elementi kaldır
-      heart.addEventListener('animationend', () => {
-        heart.remove();
-        // Sonsuz kalp için tekrar ekle
-        if (isCenchMode) {
-          setTimeout(() => createHearts(), Math.random() * 3000);
-        }
-      });
+      spawnHearts();
+    } else {
+      document.body.classList.remove('cench-mode');
+      clearHearts();
+      if (!animationRunning) {
+        animationRunning = true;
+        animate();
+      }
     }
   }
 
-  // Admin panel açma (Shift + A)
+  // Modal aç/kapa
+  function openModal() {
+    modal.classList.add('active');
+  }
+  function closeModal() {
+    modal.classList.remove('active');
+  }
+
+  // Kalp emojileri için animasyonlar
+  let heartsInterval;
+  function spawnHearts() {
+    clearHearts();
+    heartsInterval = setInterval(() => {
+      const heart = document.createElement('div');
+      heart.textContent = '❤️';
+      heart.className = 'heart';
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.fontSize = (15 + Math.random() * 25) + 'px';
+      heart.style.animationDuration = (2 + Math.random() * 2) + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 4000);
+    }, 300);
+  }
+  function clearHearts() {
+    clearInterval(heartsInterval);
+    document.querySelectorAll('.heart').forEach(h => h.remove());
+  }
+
+  // Anahtar kelime widget aç/kapa
+  function openKeyInput() {
+    keyInputWidget.style.display = 'block';
+    keyInput.value = '';
+    keyInput.focus();
+  }
+  function closeKeyInput() {
+    keyInputWidget.style.display = 'none';
+  }
+
+  // Anahtar kelime kontrolü
+  async function checkKeyWord(word) {
+    if (word.toLowerCase() === 'cench') {
+      // Firestore’a mod değişimini yaz
+      await db.collection('settings').doc('status').set({ ampulAcik: true, cenchMode: true });
+      alert('Doğru anahtar kelime! Cench modu aktif edildi.');
+      closeKeyInput();
+    } else {
+      alert('Anahtar kelime yanlış. Tekrar deneyin.');
+    }
+  }
+
+  // Admin paneli aç/kapa Shift+A
+  let adminPanelVisible = false;
   window.addEventListener('keydown', e => {
     if (e.shiftKey && e.key.toLowerCase() === 'a') {
-      const panel = document.getElementById('adminPanel');
-      if (panel.style.display === 'block') panel.style.display = 'none';
-      else panel.style.display = 'block';
+      adminPanelVisible = !adminPanelVisible;
+      adminPanel.style.display = adminPanelVisible ? 'block' : 'none';
     }
   });
 
-  // Nabız animasyonunda ampule yaklaştıkça nabız artışı
+  // Admin paneli butonları
+  toggleAmpulBtn.addEventListener('click', async () => {
+    isAmpulOn = !isAmpulOn;
+    await db.collection('settings').doc('status').set({ ampulAcik: isAmpulOn, cenchMode: isCenchMode });
+  });
+  resetCenchBtn.addEventListener('click', async () => {
+    isCenchMode = false;
+    await db.collection('settings').doc('status').set({ ampulAcik: isAmpulOn, cenchMode: isCenchMode });
+  });
+
+  // Modal tıklama ve tuş olayları
+  bulbContainer.addEventListener('click', () => {
+    if (!isAmpulOn) openModal();
+  });
+  modal.addEventListener('click', e => {
+    if (e.target === modal) closeModal();
+  });
+  openKeyInputBtn.addEventListener('click', () => {
+    closeModal();
+    openKeyInput();
+  });
+  keySubmitBtn.addEventListener('click', () => {
+    checkKeyWord(keyInput.value.trim());
+  });
+  keyCloseBtn.addEventListener('click', closeKeyInput);
+
+  // Mouse ampule yaklaştığında EKG amplitude ve hız arttır
   bulbContainer.addEventListener('mouseenter', () => {
     speed = 3;
-    amplitude = 45;
+    amplitude = 60;
   });
   bulbContainer.addEventListener('mouseleave', () => {
     speed = 1;
     amplitude = 25;
+  });
+
+  // Sayfa yüklendiğinde ayarları dinle ve animasyonu başlat
+  let animationRunning = true;
+  listenSettings();
+  animate();
+
+  // Sayfa resize olduğunda canvas boyutunu güncelle
+  window.addEventListener('resize', () => {
+    ekgCanvas.width = window.innerWidth * 0.9;
+    ekgCanvas.height = 100;
+    generatePoints();
   });
 </script>
 </body>
