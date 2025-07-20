@@ -21,11 +21,10 @@
     animation: bgPulse 10s ease-in-out infinite;
     overflow: hidden;
     position: relative;
-    transition: background 0.5s ease, color 0.5s ease;
   }
   body.white-bg {
-    background: white !important;
-    color: #333 !important;
+    background: #fff !important;
+    color: #333;
   }
 
   #ekgCanvas {
@@ -110,7 +109,6 @@
     color: #eee;
     position: relative;
     z-index: 20;
-    transition: opacity 0.5s ease;
   }
 
   /* Modal */
@@ -238,10 +236,10 @@
     color: #eee;
   }
 
-  /* Doğru zaman widget */
+  /* "Doğru zaman geldi" widget */
   #timeReachedWidget {
     position: fixed;
-    bottom: 40px;
+    top: calc(50% + 80px); /* Ampulün biraz altında */
     left: 50%;
     transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.9);
@@ -257,34 +255,26 @@
     display: none;
   }
 
-  /* Kalp animasyonları container */
-  #heartsContainer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    overflow: visible;
-    z-index: 2500;
-  }
-
+  /* Kalp animasyonları için stil */
   .heart {
-    position: absolute;
+    position: fixed;
     font-size: 24px;
-    color: red;
-    animation: floatUp 4s linear forwards;
+    color: #ff4d6d;
     user-select: none;
+    pointer-events: none;
+    animation-name: floatUp;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
   }
 
   @keyframes floatUp {
     0% {
-      transform: translateY(0) scale(1);
       opacity: 1;
+      transform: translateY(0) scale(1);
     }
     100% {
-      transform: translateY(-150px) scale(1.5);
       opacity: 0;
+      transform: translateY(-120px) scale(1.4);
     }
   }
 
@@ -341,13 +331,8 @@
     <p id="feedback" style="color:#ff6666; font-weight:600; margin-top: 12px;"></p>
   </div>
 
-  <!-- Doğru zaman geldi widget -->
-  <div id="timeReachedWidget">
-    Doğru zaman geldi ❤️
-  </div>
-
-  <!-- Kalp animasyonları container -->
-  <div id="heartsContainer"></div>
+  <!-- "Doğru zaman geldi" widget -->
+  <div id="timeReachedWidget">Doğru zaman geldi ❤️</div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -467,9 +452,11 @@
     const feedback = document.getElementById('feedback');
     const closeKeywordWidgetBtn = document.getElementById('closeKeywordWidget');
 
-    // Ampule tıklayınca modal açılır
+    // Ampule tıklayınca modal açılır (sadece ampul kapalıyken)
     bulbContainer.addEventListener('click', () => {
-      modal.classList.add('active');
+      if(!bulb.classList.contains('on')) {
+        modal.classList.add('active');
+      }
     });
 
     // Modal dışına tıklayınca kapatılır
@@ -505,44 +492,34 @@
     });
 
     // Anahtar kelime doğru mu?
-    const correctKeyword = "cench"; // senin istediğin anahtar kelime
+    const correctKeyword = "cench";
 
-    // Ampul durumunu Firestore'a kaydet
-    function saveAmpulState(isOn) {
-      db.collection('ampulDurumu').doc('state').set({ ampulAcik: isOn });
+    // Kalp animasyonlarını oluştur
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.textContent = '❤️';
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.top = (window.innerHeight + 30) + 'px';
+      heart.style.fontSize = (14 + Math.random() * 16) + 'px';
+      heart.style.animationDuration = (3 + Math.random() * 2) + 's';
+
+      document.body.appendChild(heart);
+
+      // Animasyon sonunda kalbi kaldır
+      heart.addEventListener('animationend', () => {
+        heart.remove();
+      });
     }
 
-    // Firestore’dan ampul durumunu çek ve güncelle
-    function loadAmpulState() {
-      db.collection('ampulDurumu').doc('state').get().then(doc => {
-        if(doc.exists && doc.data().ampulAcik) {
-          turnAmpulOn();
-        }
-      }).catch(console.error);
-    }
-
-    // Kalpler için animasyon fonksiyonu
     function showHeartsAnimation() {
-      const container = document.getElementById('heartsContainer');
-
-      // Kalp oluştur
-      for(let i=0; i<30; i++) {
-        const heart = document.createElement('div');
-        heart.classList.add('heart');
-        heart.textContent = '❤️';
-        heart.style.left = `${Math.random() * 100}vw`;
-        heart.style.top = `${100 + Math.random() * 50}vh`;
-        heart.style.animationDelay = `${Math.random() * 4}s`;
-        container.appendChild(heart);
-
-        // 4 saniye sonra kalbi sil
-        setTimeout(() => {
-          container.removeChild(heart);
-        }, 4000);
+      // Birden fazla kalp çıkart
+      for(let i=0; i<15; i++) {
+        setTimeout(createHeart, i * 150);
       }
     }
 
-    // Ampulü açan fonksiyon (ortaya çıkan efektler vs)
+    // Ampulü açan fonksiyon
     function turnAmpulOn() {
       bulb.classList.add('on');
       document.getElementById('footerText').style.display = 'none';
@@ -552,17 +529,34 @@
       document.body.classList.add('white-bg');
 
       // Yeni widget göster
-      document.getElementById('timeReachedWidget').style.display = 'block';
+      const timeWidget = document.getElementById('timeReachedWidget');
+      timeWidget.style.display = 'block';
 
       // Kalp animasyonlarını başlat
       showHeartsAnimation();
       setInterval(showHeartsAnimation, 4000);
 
-      // Footer yazısını değiştir (isteğe bağlı)
-      // document.getElementById('footerText').querySelector('p').textContent = "Işıklar açıldı!";
+      // Sayfa başlığını değiştir
+      document.title = "Doğru zaman geldi";
+
+      // Ampul tıklamasını engelle
+      bulbContainer.style.pointerEvents = "none";
     }
 
-    // Anahtar kelime gönderildiğinde
+    // Ampul durumunu Firestore'a kaydet
+    function saveAmpulState(isOn) {
+      db.collection('ampulDurumu').doc('state').set({ ampulAcik: isOn });
+    }
+
+    // Firestore’dan ampul durumunu çek ve uygula
+    function loadAmpulState() {
+      db.collection('ampulDurumu').doc('state').get().then(doc => {
+        if(doc.exists && doc.data().ampulAcik) {
+          turnAmpulOn();
+        }
+      }).catch(console.error);
+    }
+
     submitKeyword.addEventListener('click', () => {
       const val = keywordInput.value.trim().toLowerCase();
       if(val === correctKeyword.toLowerCase()) {
