@@ -1,15 +1,625 @@
-<HTML>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Işıklar Ecrinimi Bekliyor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500&display=swap');
+
+  body {
+    margin: 0;
+    font-family: 'Unbounded', sans-serif;
+    color: #fff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: radial-gradient(#000 0%, #0a0a0a 100%);
+    background-size: 200% 200%;
+    animation: bgPulse 10s ease-in-out infinite;
+    overflow: hidden;
+    position: relative;
+  }
+  body.white-bg {
+    background: #fff !important;
+    color: #333;
+  }
+
+  #ekgCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .container {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 20;
+  }
+
+  .swing {
+    animation: swing 4s ease-in-out infinite;
+    transform-origin: top center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 20;
+  }
+
+  .rope {
+    width: 2px;
+    height: 100px;
+    background-color: #888;
+  }
+
+  .bulb {
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at 30% 30%, #444, #222);
+    border-radius: 50% 50% 45% 45%;
+    position: relative;
+    box-shadow: inset 0 0 10px #000;
+    user-select: none;
+    z-index: 20;
+    transition: background 0.8s ease, box-shadow 0.8s ease;
+  }
+
+  .bulb.on {
+    background: radial-gradient(circle at 30% 30%, #fffacd, #ffeb3b);
+    box-shadow:
+      0 0 20px 10px #ffeb3b88,
+      0 0 40px 20px #fffacd88,
+      inset 0 0 15px 8px #fffacd;
+  }
+
+  .bulb::before {
+    content: '';
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 26px;
+    height: 20px;
+    background-color: #666;
+    border-radius: 4px;
+  }
+
+  .footer {
+    width: 90%;
+    max-width: 500px;
+    margin: 20px auto 40px;
+    padding: 25px 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    user-select: none;
+    color: #eee;
+    position: relative;
+    z-index: 20;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 30px 40px 20px 40px;
+    max-width: 400px;
+    color: #eee;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    text-align: center;
+    position: relative;
+    user-select: none;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    margin-bottom: 10px;
+  }
+
+  /* Modal içi Ecrinim butonu */
+  #modalEcrinBtn {
+    background: #888888;
+    color: #eee;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 24px;
+    cursor: pointer;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(136, 136, 136, 0.5);
+    transition: background 0.3s ease;
+    user-select: none;
+    margin-top: 8px;
+  }
+  #modalEcrinBtn:hover {
+    background: #666666;
+  }
 
 
 
-<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-<HEAD>
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=UTF-8"><META HTTP-EQUIV="Refresh" CONTENT="0; URL=027803.html"><TITLE>Page has moved</TITLE>
-</HEAD>
-<BODY>
-<A HREF="027803.html"><h3>Click here...</h3></A>
-</BODY>
+  /* Anahtar kelime widget */
+  #keywordWidget {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 30px 40px 40px 40px;
+    max-width: 320px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    color: #eee;
+    font-weight: 500;
+    text-align: center;
+    z-index: 2000;
+    display: none;
+  }
+
+  #keywordWidget input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    margin-bottom: 20px;
+    background: rgba(255,255,255,0.2);
+    color: #111;
+  }
+
+  #keywordWidget button {
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: none;
+    background: #888888;
+    color: #eee;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  #keywordWidget button:hover {
+    background: #666666;
+  }
+
+  /* Çarpı kapatma butonu */
+  #closeKeywordWidget {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 26px;
+    color: #ccc;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+  }
+  #closeKeywordWidget:hover {
+    color: #eee;
+  }
+
+    /* "Doğru zaman geldi" widget */
+  #timeReachedWidget {
+    display: none;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    font-weight: 600;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh; /* maksimum ekran yüksekliğinin %80’i kadar */
+    overflow-y: auto;  /* içerik uzun olursa kaydır */
+    margin: 40px auto 20px;
+    box-shadow: 0 8px 24px rgba(255,0,0,0.2);
+    z-index: 9999;
+  }
 
 
 
-</HTML>
+
+  /* Kalp animasyonları için stil */
+  .heart {
+    position: fixed;
+    font-size: 24px;
+    color: #ff4d6d;
+    user-select: none;
+    pointer-events: none;
+    animation-name: floatUp;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+  }
+
+  @keyframes floatUp {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-120px) scale(1.4);
+    }
+  }
+
+  /* Animasyonlar */
+  @keyframes swing {
+    0%   { transform: rotate(0deg); }
+    25%  { transform: rotate(3deg); }
+    50%  { transform: rotate(0deg); }
+    75%  { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  @keyframes bgPulse {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- EKG Canvas -->
+  <canvas id="ekgCanvas"></canvas>
+
+  <div class="container">
+    <div class="swing" id="bulb-container" tabindex="0" role="button" aria-label="Ampul">
+      <div class="rope"></div>
+      <div class="bulb" id="bulb"></div>
+    </div>
+  </div>
+
+  <div class="footer" id="footerText">
+    <p>Işıklar açılmak için doğru zamanı bekliyor...</p>
+  </div>
+
+  <!-- Modal (Ampule tıklayınca açılır) -->
+  <div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-describedby="modalDesc">
+    <div class="modal">
+      <p id="modalDesc">
+        Üzgünüm, ışıkları sen değil sadece <strong>Ecrin’im</strong> açabilir.<br>
+        Çünkü doğru zamanı o bilir.
+      </p>
+      <button id="modalEcrinBtn" aria-label="Anahtar kelime girişi için tıklayın">Ecrinim</button>
+    </div>
+  </div>
+
+  <!-- Anahtar kelime widget -->
+  <div id="keywordWidget" role="dialog" aria-modal="true" aria-labelledby="widgetTitle" aria-describedby="widgetDesc">
+    <div id="closeKeywordWidget" aria-label="Kapat" role="button" tabindex="0">&times;</div>
+    <h2 id="widgetTitle">Anahtar Kelimeyi Gir</h2>
+    <p id="widgetDesc">Ampulü açmak için anahtar kelimeyi yazınız.</p>
+    <input type="text" id="keywordInput" placeholder="Anahtar kelime" autocomplete="off" />
+    <button id="submitKeyword">Gönder</button>
+    <p id="feedback" style="color:#ff6666; font-weight:600; margin-top: 12px;"></p>
+  </div>
+
+  <!-- "Doğru zaman geldi" widget -->
+  <div id="timeReachedWidget">Ecrinim güzelim şuan bu kelimeleri yazmak bana oldukça zor geliyor hatta sanırım biraz duygusallaştım ama sonunda geldin sonunda bütün korkular veya eski düşünceler geride bırakılmış demek oluyor seni çok seviyorum bu duygularımı anlatmaya çalışsam sanırım bu yazılar hiç bitmez ahahaha ne olursa olsun herşeyin üstesinden birlikte gelicez seni çok seviyorum birtanem iyi ki geldin iyi ki o ışıkları açtın❤️ </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Firebase yapılandırma
+    const firebaseConfig = {
+      apiKey: "AIzaSyDYb071_2yKlgy6tNRjpW47esPBbzOGuI4",
+      authDomain: "isiklar-39c08.firebaseapp.com",
+      projectId: "isiklar-39c08",
+      storageBucket: "isiklar-39c08.firebasestorage.app",
+      messagingSenderId: "1097392235236",
+      appId: "1:1097392235236:web:c3162f351ecbc4258b42f1",
+      measurementId: "G-BWC9YWGM37"
+    };
+
+    // Firebase başlatma
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // EKG canvas animasyonu
+    const canvas = document.getElementById('ekgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let points = [];
+    const totalPoints = 300;
+    let baseY;
+    let speed = 2;
+    let amplitude = 20;
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      baseY = height / 2;
+      points = [];
+      for (let i = 0; i <= totalPoints; i++) {
+        points.push(0);
+      }
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function generateNextValue() {
+      return (Math.random() - 0.5) * amplitude * (Math.random() > 0.8 ? 3 : 1);
+    }
+
+    function updatePoints() {
+      points.shift();
+      points.push(generateNextValue());
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(128,128,128,0.7)';
+      ctx.shadowColor = 'rgba(128,128,128,0.5)';
+      ctx.shadowBlur = 10;
+
+      ctx.beginPath();
+      ctx.moveTo(0, baseY + points[0]);
+      for(let i = 1; i < points.length; i++) {
+        ctx.lineTo(i * (width / totalPoints), baseY + points[i]);
+      }
+      ctx.stroke();
+    }
+
+    function loop() {
+      updatePoints();
+      draw();
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    // Ampul ve animasyon kontrolü
+    const bulbContainer = document.getElementById('bulb-container');
+    const bulb = document.getElementById('bulb');
+    let mouseNear = false;
+
+    function updateAmplitudeSpeed(isNear) {
+      if(isNear) {
+        amplitude = 45;
+        speed = 6;
+      } else {
+        amplitude = 20;
+        speed = 2;
+      }
+    }
+
+    document.addEventListener('mousemove', e => {
+      const rect = bulbContainer.getBoundingClientRect();
+      const distX = Math.max(rect.left - e.clientX, e.clientX - rect.right, 0);
+      const distY = Math.max(rect.top - e.clientY, e.clientY - rect.bottom, 0);
+      const dist = Math.sqrt(distX*distX + distY*distY);
+
+      if(dist < 150) {
+        if(!mouseNear) {
+          mouseNear = true;
+          updateAmplitudeSpeed(true);
+        }
+      } else {
+        if(mouseNear) {
+          mouseNear = false;
+          updateAmplitudeSpeed(false);
+        }
+      }
+    });
+
+    // Modal ve widget kontrolü
+    const modal = document.getElementById('modal');
+    const modalEcrinBtn = document.getElementById('modalEcrinBtn');
+    const keywordWidget = document.getElementById('keywordWidget');
+    const keywordInput = document.getElementById('keywordInput');
+    const submitKeyword = document.getElementById('submitKeyword');
+    const feedback = document.getElementById('feedback');
+    const closeKeywordWidgetBtn = document.getElementById('closeKeywordWidget');
+
+    // Ampule tıklayınca modal açılır (sadece ampul kapalıyken)
+    bulbContainer.addEventListener('click', () => {
+      if(!bulb.classList.contains('on')) {
+        modal.classList.add('active');
+      }
+    });
+
+    // Modal dışına tıklayınca kapatılır
+    modal.addEventListener('click', (e) => {
+      if(e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+
+    // Modal içindeki "Ecrinim" butonuna tıklayınca anahtar kelime widget açılır
+    modalEcrinBtn.addEventListener('click', () => {
+      keywordWidget.style.display = 'block';
+      keywordInput.focus();
+      feedback.textContent = '';
+      modal.classList.remove('active');
+    });
+
+    // Anahtar kelime widget çarpı butonu ile kapatma
+    closeKeywordWidgetBtn.addEventListener('click', () => {
+      keywordWidget.style.display = 'none';
+      feedback.textContent = '';
+      keywordInput.value = '';
+    });
+    closeKeywordWidgetBtn.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' ') {
+        closeKeywordWidgetBtn.click();
+      }
+    });
+
+    // Enter tuşu ile gönder
+    keywordInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') submitKeyword.click();
+    });
+
+    // Anahtar kelime doğru mu?
+    const correctKeyword = "cench";
+
+    // Kalp animasyonlarını oluştur
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.textContent = '❤️';
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.top = Math.random() * window.innerHeight + 'px';
+      heart.style.fontSize = (14 + Math.random() * 16) + 'px';
+      heart.style.animationDuration = (3 + Math.random() * 2) + 's';
+
+
+      document.body.appendChild(heart);
+
+
+      // Animasyon sonunda kalbi kaldır
+      heart.addEventListener('animationend', () => {
+        heart.remove();
+      });
+    }
+
+    function showHeartsAnimation() {
+      // Birden fazla kalp çıkart
+      for(let i=0; i<15; i++) {
+        setTimeout(createHeart, i * 150);
+      }
+    }
+
+    // Ampulü açan fonksiyon
+    function turnAmpulOn() {
+      bulb.classList.add('on');
+      document.getElementById('footerText').style.display = 'none';
+      document.getElementById('ekgCanvas').style.display = 'none';
+
+      // Arka plan beyaz yap
+      document.body.classList.add('white-bg');
+
+      // Yeni widget göster
+      const timeWidget = document.getElementById('timeReachedWidget');
+      timeWidget.style.display = 'block';
+
+      // Kalp animasyonlarını başlat
+      showHeartsAnimation();
+      setInterval(showHeartsAnimation, 4000);
+
+      // Sayfa başlığını değiştir
+      document.title = "Doğru zaman geldi";
+
+      // Ampul tıklamasını engelle
+      bulbContainer.style.pointerEvents = "none";
+    }
+
+    // Ampul durumunu Firestore'a kaydet
+    function saveAmpulState(isOn) {
+      db.collection('ampulDurumu').doc('state').set({ ampulAcik: isOn });
+    }
+
+    // Firestore’dan ampul durumunu çek ve uygula
+    function loadAmpulState() {
+      db.collection('ampulDurumu').doc('state').get().then(doc => {
+        if(doc.exists && doc.data().ampulAcik) {
+          turnAmpulOn();
+        }
+      }).catch(console.error);
+    }
+
+    submitKeyword.addEventListener('click', () => {
+      const val = keywordInput.value.trim().toLowerCase();
+      if(val === correctKeyword.toLowerCase()) {
+        turnAmpulOn();
+        keywordWidget.style.display = 'none';
+        keywordInput.value = '';
+        feedback.textContent = '';
+        saveAmpulState(true);
+      } else {
+        feedback.textContent = 'Yanlış anahtar kelime. Tekrar deneyin.';
+      }
+    });
+
+    // Sayfa yüklendiğinde durumu kontrol et
+    window.onload = () => {
+      loadAmpulState();
+    };
+
+    // Admin panel tuş kombinasyonu (Shift + A)
+    document.addEventListener('keydown', (e) => {
+      if (e.shiftKey && e.key.toLowerCase() === 'a') {
+        document.getElementById('adminPanel').style.display = 'block';
+      }
+    });
+
+    // Admin panelden ampul durumunu güncelle
+    function setAmpul(isOn) {
+      db.collection('ampulDurumu').doc('state').set({ ampulAcik: isOn }).then(() => {
+        document.getElementById('adminPanel').style.display = 'none';
+        location.reload(); // Sayfayı yenileyerek durumu uygula
+      });
+    }
+  </script>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" style="
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    background:rgba(255,255,255,0.1);
+    padding:30px 40px;
+    border-radius:20px;
+    backdrop-filter:blur(15px);
+    box-shadow:0 8px 32px rgba(31, 38, 135, 0.25);
+    color:#eee;
+    z-index:3000;
+    text-align:center;
+    font-family: 'Unbounded', sans-serif;
+  ">
+    <h2>Admin Paneli</h2>
+    <p>Ampul Durumunu Değiştir</p>
+    <button onclick="setAmpul(true)">Ampulü Aç</button>
+    <button onclick="setAmpul(false)">Ampulü Kapat</button>
+    <br><br>
+    <button onclick="document.getElementById('adminPanel').style.display='none'">Kapat</button>
+  </div>
+
+</body>
+</html>
